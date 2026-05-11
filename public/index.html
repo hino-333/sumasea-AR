@@ -946,13 +946,9 @@
           <span class="action-btn-icon">↺</span>
           <span>とりなおす</span>
         </button>
-        <button class="action-btn primary" id="save-btn">
-          <span class="action-btn-icon">⬇</span>
-          <span>ほぞん</span>
-        </button>
-        <button class="action-btn" id="share-btn">
+        <button class="action-btn primary" id="share-btn">
           <span class="action-btn-icon">↗</span>
-          <span>シェア</span>
+          <span>ほぞん・シェア</span>
         </button>
       </div>
     </div>
@@ -1614,9 +1610,7 @@
       $('preview-screen').classList.remove('open');
     });
 
-    $('save-btn').addEventListener('click', async () => {
-      if (!lastCapturedBlob) return;
-      haptic();
+    function downloadPhoto() {
       const url = URL.createObjectURL(lastCapturedBlob);
       const a = document.createElement('a');
       a.href = url;
@@ -1627,7 +1621,7 @@
       document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       showToast('ほぞんしました！');
-    });
+    }
 
     $('share-btn').addEventListener('click', async () => {
       if (!lastCapturedBlob) return;
@@ -1641,8 +1635,7 @@
             text: '須磨シーワールドホテルでとった写真🐬'
           });
         } else {
-          // Fallback: download
-          $('save-btn').click();
+          downloadPhoto();
         }
       } catch (e) {
         if (e.name !== 'AbortError') {
