@@ -771,27 +771,25 @@
       position: fixed;
       top: calc(env(safe-area-inset-top, 0px) + 80px);
       left: 50%;
-      transform: translateX(-50%) translateY(-150px);
-      background: rgba(0, 14, 35, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      transform: translateX(-50%) translateZ(0);
+      background: rgba(0, 14, 35, 0.95);
       border: 1px solid var(--glass-border);
       color: white;
       padding: 12px 24px;
-      border-radius: 100px;
+      border-radius: 24px;
       font-size: 13px;
       font-weight: 700;
       z-index: 300;
-      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+      transition: opacity 0.4s ease;
       pointer-events: none;
-      white-space: nowrap;
+      white-space: pre-line;
       max-width: 90vw;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      text-align: center;
     }
 
     .toast.show {
-      transform: translateX(-50%) translateY(0);
+      opacity: 1;
     }
 
     /* ============ Flash ============ */
@@ -948,10 +946,12 @@
       </div>
     </div>
 
-    <!-- ============ Flash & Toast ============ -->
+    <!-- ============ Flash ============ -->
     <div class="flash" id="flash"></div>
-    <div class="toast" id="toast"></div>
   </div>
+
+  <!-- Toast はapp外に出してクリッピングを回避 -->
+  <div class="toast" id="toast"></div>
 
   <script>
     'use strict';
@@ -1100,7 +1100,7 @@
     let toastTimer = null;
     function showToast(msg, ms = 1800) {
       const t = $('toast');
-      t.textContent = msg;
+      t.innerHTML = msg.replace(/\n/g, '<br>');
       t.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => t.classList.remove('show'), ms);
@@ -1166,7 +1166,7 @@
         await video.play();
       } catch (e) {
         console.error('Camera error:', e);
-        showToast('カメラを起動できませんでした');
+        showToast('カメラを起動できませんでした\nお使いのブラウザのカメラ設定がオンになっているか確認してください', 4000);
       }
     }
 
