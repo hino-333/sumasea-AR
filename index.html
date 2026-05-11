@@ -1101,7 +1101,7 @@
     let toastTimer = null;
     function showToast(msg, ms = 1800) {
       const t = $('toast');
-      t.textContent = msg;
+      t.innerHTML = msg.replace(/\n/g, '<br>');
       t.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => t.classList.remove('show'), ms);
