@@ -177,8 +177,25 @@
 
     .top-bar-right {
       display: flex;
-      gap: 10px;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .btn-with-label {
+      display: flex;
+      flex-direction: column;
       align-items: center;
+      gap: 4px;
+    }
+
+    .btn-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.95);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      white-space: nowrap;
+      pointer-events: none;
     }
 
     .glass-btn {
@@ -324,10 +341,23 @@
     }
 
     /* ステッカー表示トグルボタン: 右下 */
-    .sticker-toggle-btn {
+    .sticker-toggle-wrap {
       position: absolute;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 42px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
       right: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      z-index: 35;
+      pointer-events: none;
+    }
+
+    .sticker-toggle-wrap .sticker-toggle-btn {
+      pointer-events: auto;
+    }
+
+    .sticker-toggle-btn {
       width: 56px;
       height: 56px;
       border-radius: 50%;
@@ -823,8 +853,14 @@
     <!-- ============ Top Bar ============ -->
     <div class="top-bar">
       <div class="top-bar-right">
-        <button class="glass-btn" id="flip-btn" aria-label="カメラ切り替え">⟲</button>
-        <button class="glass-btn" id="clear-btn" aria-label="全クリア">🗑️</button>
+        <div class="btn-with-label">
+          <button class="glass-btn" id="flip-btn" aria-label="カメラ反転">⟲</button>
+          <div class="btn-label">カメラ反転</div>
+        </div>
+        <div class="btn-with-label">
+          <button class="glass-btn" id="clear-btn" aria-label="全てクリア">🗑️</button>
+          <div class="btn-label">全てクリア</div>
+        </div>
       </div>
     </div>
 
@@ -832,7 +868,10 @@
     <div class="palette-bg" id="palette-bg"></div>
     <div class="palette-scroll" id="palette-scroll"></div>
     <button class="palette-close" id="palette-close" aria-label="閉じる">✕</button>
-    <button class="sticker-toggle-btn" id="sticker-toggle-btn" aria-label="ステッカー">🐬</button>
+    <div class="sticker-toggle-wrap">
+      <button class="sticker-toggle-btn" id="sticker-toggle-btn" aria-label="ステッカー">🐬</button>
+      <div class="btn-label">ステッカー</div>
+    </div>
 
     <!-- ============ Bottom Bar ============ -->
     <div class="bottom-bar">
@@ -1284,26 +1323,22 @@
       updateStickerTransform(floatTarget);
     });
 
-    // Long press (1s) to delete
-    $('fb-delete').addEventListener('pointerdown', (e) => {
+    // タップで即削除（誤タップは undo トーストで戻せる）
+    $('fb-delete').addEventListener('click', (e) => {
       e.stopPropagation();
-      deleteHoldTimer = setTimeout(() => {
-        if (!floatTarget) return;
-        haptic(20);
-        const deleted = floatTarget;
-        const deletedItem = {
-          emoji: deleted._state.emoji,
-          src: deleted._state.src,
-          anim: deleted._state.anim
-        };
-        deleted.remove();
-        hideFloatingControls();
-        selectedSticker = null;
-        showUndoToast(deletedItem);
-      }, 1000);
+      if (!floatTarget) return;
+      haptic(20);
+      const deleted = floatTarget;
+      const deletedItem = {
+        emoji: deleted._state.emoji,
+        src: deleted._state.src,
+        anim: deleted._state.anim
+      };
+      deleted.remove();
+      hideFloatingControls();
+      selectedSticker = null;
+      showUndoToast(deletedItem);
     });
-    $('fb-delete').addEventListener('pointerup', () => clearTimeout(deleteHoldTimer));
-    $('fb-delete').addEventListener('pointercancel', () => clearTimeout(deleteHoldTimer));
 
     /* ============================================
        Undo Toast
