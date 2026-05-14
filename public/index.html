@@ -207,51 +207,36 @@
     /* ============ Sticker Palette ============ */
     .sticker-palette {
       position: absolute;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 120px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 192px);
       left: 0;
       right: 0;
-      height: 88px;
-      display: flex;
-      align-items: center;
-      z-index: 30;
-      pointer-events: auto;
+      height: 210px;
+      background: rgba(0, 8, 24, 0.82);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      z-index: 29;
+      overflow: hidden;
     }
 
-    .palette-recommended {
-      display: flex;
-      align-items: center;
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      padding: 0 10px 0 12px;
-      flex-shrink: 0;
-    }
-
-    .palette-divider {
-      width: 1px;
-      height: 56px;
-      background: rgba(255,255,255,0.25);
-      flex-shrink: 0;
-    }
-
-    .palette-scroll {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 12px;
-      overflow-x: auto;
+      padding: 10px;
+      overflow-y: auto;
+      height: 100%;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-      flex: 1;
     }
 
-    .palette-scroll::-webkit-scrollbar { display: none; }
+    .palette-grid::-webkit-scrollbar { display: none; }
 
     .palette-btn {
-      flex: 0 0 auto;
-      width: 72px;
-      height: 72px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
+      aspect-ratio: 1;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -267,26 +252,18 @@
     }
 
     .palette-btn.recommended {
-      background: rgba(255, 215, 0, 0.12);
-      border-color: rgba(255, 215, 0, 0.3);
+      background: rgba(255, 215, 0, 0.1);
+      border-color: rgba(255, 215, 0, 0.35);
     }
 
     .palette-btn .emoji-inner {
-      font-size: 40px;
+      font-size: 36px;
     }
 
     .palette-btn .sticker-img {
-      width: 52px;
-      height: 52px;
-    }
-
-    .palette-rec-label {
-      font-size: 9px;
-      color: rgba(255, 215, 0, 0.8);
-      text-align: center;
-      margin-top: 2px;
-      letter-spacing: 0.05em;
-      font-weight: 900;
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
     }
 
     /* ============ Bottom Bar ============ */
@@ -752,18 +729,13 @@
     <div class="top-bar">
       <div class="top-bar-right">
         <button class="glass-btn" id="flip-btn" aria-label="カメラ切り替え">⟲</button>
-        <button class="glass-btn" id="clear-btn" aria-label="全クリア" title="全クリア">🗑️</button>
-        <button class="glass-btn" id="mute-btn" aria-label="ミュート">🔊</button>
+        <button class="glass-btn" id="clear-btn" aria-label="全クリア">🗑️</button>
       </div>
     </div>
 
     <!-- ============ Sticker Palette ============ -->
     <div class="sticker-palette" id="sticker-palette">
-      <!-- Recommended section (fixed left) -->
-      <div class="palette-recommended" id="palette-recommended"></div>
-      <div class="palette-divider"></div>
-      <!-- All stickers scrollable -->
-      <div class="palette-scroll" id="palette-scroll"></div>
+      <div class="palette-grid" id="palette-grid"></div>
     </div>
 
     <!-- ============ Bottom Bar ============ -->
@@ -817,9 +789,21 @@
        Sticker Definitions
        ============================================ */
     const STICKERS = [
-      { emoji: '🐬', anim: 'swim',   recommended: true },
-      { emoji: '🌊', anim: 'pulse',  recommended: true },
-      { emoji: '⭐', anim: 'pulse',  recommended: true },
+      // ⭐ おすすめ
+      { emoji: '🐬', anim: 'swim',  recommended: true },
+      { emoji: '🌊', anim: 'pulse', recommended: true },
+      { emoji: '⭐', anim: 'pulse', recommended: true },
+      // PNG画像ステッカー
+      { src: 'img/しゃち-sticker.png',          anim: 'swim' },
+      { src: 'img/イルカ-sticker.png',           anim: 'swim' },
+      { src: 'img/シャチ1-sticker.png',          anim: 'swim' },
+      { src: 'img/シャチ2-sticker.png',          anim: 'swim' },
+      { src: 'img/orca-sticker.png',             anim: 'swim' },
+      { src: 'img/アザラシ-sticker.png',         anim: 'bob' },
+      { src: 'img/アシカ-sticker.png',           anim: 'swim' },
+      { src: 'img/ウミガメ-sticker.png',         anim: 'swim' },
+      { src: 'img/マゼランペンギン-sticker.png', anim: 'wiggle' },
+      // 絵文字ステッカー
       { emoji: '🐳', anim: 'swim' },
       { emoji: '🦈', anim: 'swim' },
       { emoji: '🐠', anim: 'swim' },
@@ -942,18 +926,9 @@
     }
 
     /* ============================================
-       Mute
+       Mute (音は常にON)
        ============================================ */
-    let muted = sessionStorage.getItem('muted') === '1';
-    function updateMuteBtn() {
-      $('mute-btn').textContent = muted ? '🔇' : '🔊';
-    }
-    $('mute-btn').addEventListener('click', () => {
-      muted = !muted;
-      sessionStorage.setItem('muted', muted ? '1' : '0');
-      updateMuteBtn();
-    });
-    updateMuteBtn();
+    let muted = false;
 
     /* ============================================
        Sparkle Particles
@@ -1113,39 +1088,18 @@
        Build Sticker Palette
        ============================================ */
     function buildPalette() {
-      const recContainer = $('palette-recommended');
-      const scrollContainer = $('palette-scroll');
-
+      const grid = $('palette-grid');
       STICKERS.forEach(item => {
         const btn = document.createElement('button');
         btn.className = 'palette-btn' + (item.recommended ? ' recommended' : '');
-
         const inner = createStickerVisual(item);
         if (item.anim) inner.style.animation = getAnimationStyle(item.anim);
-
-        if (item.recommended) {
-          const wrap = document.createElement('div');
-          wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;';
-          wrap.appendChild(inner);
-          const label = document.createElement('div');
-          label.className = 'palette-rec-label';
-          label.textContent = '✨';
-          wrap.appendChild(label);
-          btn.appendChild(wrap);
-        } else {
-          btn.appendChild(inner);
-        }
-
+        btn.appendChild(inner);
         btn.addEventListener('click', () => {
           haptic();
           addSticker(item);
         });
-
-        if (item.recommended) {
-          recContainer.appendChild(btn);
-        } else {
-          scrollContainer.appendChild(btn);
-        }
+        grid.appendChild(btn);
       });
     }
     buildPalette();
