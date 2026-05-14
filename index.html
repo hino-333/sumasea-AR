@@ -118,34 +118,7 @@
       display: block;
     }
 
-    .sticker-option .sticker-img {
-      width: 50px;
-      height: 50px;
-    }
-
-    .delete-btn {
-      position: absolute;
-      top: -12px;
-      right: -12px;
-      width: 32px;
-      height: 32px;
-      background: var(--ocean-mid);
-      border-radius: 50%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 18px;
-      font-weight: 900;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-      pointer-events: auto;
-      border: 2px solid white;
-      cursor: pointer;
-    }
-
-    .sticker.selected .delete-btn { display: flex; }
-
-    /* Animations - apply to both emoji and image stickers */
+    /* Animations */
     .anim-bob .emoji-inner, .anim-bob .sticker-img { animation: bob 2s ease-in-out infinite; }
     .anim-swim .emoji-inner, .anim-swim .sticker-img { animation: swim 3s ease-in-out infinite; }
     .anim-spin3d .emoji-inner, .anim-spin3d .sticker-img { animation: spin3d 4s linear infinite; }
@@ -174,6 +147,17 @@
       50% { transform: rotate(8deg); }
     }
 
+    /* Sticker bounce animation */
+    .sticker-bounce {
+      animation: stickerBounce 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards !important;
+    }
+
+    @keyframes stickerBounce {
+      0%   { transform: translate(-50%, -50%) scale(0) rotate(0deg); }
+      60%  { transform: translate(-50%, -50%) scale(1.5) rotate(5deg); }
+      100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    }
+
     /* ============ Top Bar ============ */
     .top-bar {
       position: absolute;
@@ -182,13 +166,20 @@
       right: 0;
       padding: 16px;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
+      gap: 10px;
       z-index: 50;
       pointer-events: none;
     }
 
     .top-bar > * { pointer-events: auto; }
+
+    .top-bar-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
     .glass-btn {
       width: 48px;
@@ -213,156 +204,89 @@
       background: var(--glass-strong);
     }
 
-    .hamburger {
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .hamburger span {
-      width: 18px;
-      height: 2px;
-      background: white;
-      border-radius: 2px;
-    }
-
-    /* ============ Drawer ============ */
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 10, 30, 0.6);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 100;
-    }
-
-    .drawer-overlay.open {
-      opacity: 1;
+    /* ============ Sticker Palette ============ */
+    .sticker-palette {
+      position: absolute;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 120px);
+      left: 0;
+      right: 0;
+      height: 88px;
+      display: flex;
+      align-items: center;
+      z-index: 30;
       pointer-events: auto;
     }
 
-    .drawer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      width: 80%;
-      max-width: 320px;
-      background: linear-gradient(180deg, #003875 0%, #001a3d 60%, #000914 100%);
-      transform: translateX(-100%);
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 101;
-      padding: env(safe-area-inset-top, 24px) 0 env(safe-area-inset-bottom, 24px);
-      display: flex;
-      flex-direction: column;
-      box-shadow: 4px 0 32px rgba(0, 0, 0, 0.5);
-      overflow: hidden;
-    }
-
-    .drawer::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -30%;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .drawer.open { transform: translateX(0); }
-
-    .drawer-header {
-      padding: 32px 24px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      position: relative;
-    }
-
-    .drawer-title {
-      font-family: 'Pacifico', cursive;
-      font-size: 32px;
-      background: linear-gradient(135deg, #00d4ff, #ffffff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      letter-spacing: 0.5px;
-      line-height: 1.1;
-    }
-
-    .drawer-subtitle {
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      margin-top: 6px;
-      letter-spacing: 0.2em;
-      font-weight: 700;
-    }
-
-    .drawer-menu {
-      flex: 1;
-      padding: 16px 12px;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    .menu-section-label {
-      font-size: 10px;
-      color: rgba(255,255,255,0.4);
-      letter-spacing: 0.15em;
-      padding: 16px 16px 8px;
-      text-transform: uppercase;
-      font-weight: 900;
-    }
-
-    .menu-item {
+    .palette-recommended {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      color: white;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s;
-      position: relative;
-    }
-
-    .menu-item:active {
-      background: rgba(255,255,255,0.08);
-    }
-
-    .menu-item-icon {
-      width: 38px;
-      height: 38px;
-      background: rgba(0, 212, 255, 0.15);
-      border: 1px solid rgba(0, 212, 255, 0.2);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
+      gap: 8px;
+      padding: 0 10px 0 12px;
       flex-shrink: 0;
     }
 
-    .menu-item-badge {
-      margin-left: auto;
-      font-size: 9px;
-      background: var(--coral);
-      padding: 3px 8px;
-      border-radius: 8px;
-      letter-spacing: 0.1em;
-      font-weight: 900;
+    .palette-divider {
+      width: 1px;
+      height: 56px;
+      background: rgba(255,255,255,0.25);
+      flex-shrink: 0;
     }
 
-    .drawer-footer {
-      padding: 16px 24px;
-      font-size: 10px;
-      color: rgba(255,255,255,0.3);
+    .palette-scroll {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      flex: 1;
+    }
+
+    .palette-scroll::-webkit-scrollbar { display: none; }
+
+    .palette-btn {
+      flex: 0 0 auto;
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .palette-btn:active {
+      transform: scale(0.88);
+      background: rgba(0, 212, 255, 0.25);
+    }
+
+    .palette-btn.recommended {
+      background: rgba(255, 215, 0, 0.12);
+      border-color: rgba(255, 215, 0, 0.3);
+    }
+
+    .palette-btn .emoji-inner {
+      font-size: 40px;
+    }
+
+    .palette-btn .sticker-img {
+      width: 52px;
+      height: 52px;
+    }
+
+    .palette-rec-label {
+      font-size: 9px;
+      color: rgba(255, 215, 0, 0.8);
       text-align: center;
-      letter-spacing: 0.1em;
-      border-top: 1px solid rgba(255,255,255,0.05);
+      margin-top: 2px;
+      letter-spacing: 0.05em;
+      font-weight: 900;
     }
 
     /* ============ Bottom Bar ============ */
@@ -456,101 +380,57 @@
       transform: scale(0.95);
     }
 
-    /* ============ Sticker Tray ============ */
-    .sticker-tray {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0, 14, 35, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-top: 1px solid var(--glass-border);
-      transform: translateY(110%);
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 40;
-      padding-bottom: env(safe-area-inset-bottom, 0);
+    /* ============ Floating Controls ============ */
+    #floating-controls {
+      position: fixed;
+      z-index: 500;
+      pointer-events: none;
+      display: none;
     }
 
-    .sticker-tray.open { transform: translateY(0); }
-
-    .tray-handle {
-      width: 36px;
-      height: 4px;
-      background: rgba(255,255,255,0.3);
-      border-radius: 2px;
-      margin: 8px auto 0;
-    }
-
-    .tray-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 20px 8px;
-    }
-
-    .tray-title {
-      font-size: 15px;
-      font-weight: 900;
-      letter-spacing: 0.05em;
-    }
-
-    .tray-title small {
+    #floating-controls.visible {
       display: block;
-      font-size: 10px;
-      color: rgba(255,255,255,0.5);
-      font-weight: 400;
-      letter-spacing: 0.05em;
-      margin-top: 2px;
+      pointer-events: auto;
     }
 
-    .tray-close {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: white;
+    .float-btn {
+      position: absolute;
       width: 44px;
       height: 44px;
       border-radius: 50%;
+      background: rgba(0, 14, 35, 0.85);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      color: white;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      transform: translate(-50%, -50%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: transform 0.1s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+    }
+
+    .float-btn:active {
+      transform: translate(-50%, -50%) scale(0.88);
+      background: rgba(0, 102, 204, 0.7);
+    }
+
+    /* ============ Sparkle Particles ============ */
+    .sparkle-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
       font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      animation: sparkle-fly 0.6s ease-out forwards;
     }
 
-    .sticker-grid {
-      display: flex;
-      gap: 10px;
-      padding: 8px 16px 20px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .sticker-grid::-webkit-scrollbar { display: none; }
-
-    .sticker-option {
-      flex: 0 0 auto;
-      width: 64px;
-      height: 64px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.15s, background 0.2s;
-      padding: 0;
-    }
-
-    .sticker-option:active {
-      transform: scale(0.88);
-      background: rgba(0, 212, 255, 0.2);
-    }
-
-    .sticker-option .emoji-inner {
-      font-size: 36px;
+    @keyframes sparkle-fly {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
     }
 
     /* ============ Welcome Screen ============ */
@@ -790,6 +670,7 @@
 
     .toast.show {
       opacity: 1;
+      pointer-events: auto;
     }
 
     /* ============ Flash ============ */
@@ -815,7 +696,7 @@
     /* ============ Hint ============ */
     .hint {
       position: absolute;
-      bottom: calc(env(safe-area-inset-bottom, 0) + 200px);
+      bottom: calc(env(safe-area-inset-bottom, 0) + 220px);
       left: 50%;
       transform: translateX(-50%);
       background: rgba(0, 14, 35, 0.7);
@@ -869,10 +750,20 @@
 
     <!-- ============ Top Bar ============ -->
     <div class="top-bar">
-      <button class="glass-btn hamburger" id="menu-btn" aria-label="メニュー">
-        <span></span><span></span><span></span>
-      </button>
-      <button class="glass-btn" id="flip-btn" aria-label="カメラ切り替え">⟲</button>
+      <div class="top-bar-right">
+        <button class="glass-btn" id="flip-btn" aria-label="カメラ切り替え">⟲</button>
+        <button class="glass-btn" id="clear-btn" aria-label="全クリア" title="全クリア">🗑️</button>
+        <button class="glass-btn" id="mute-btn" aria-label="ミュート">🔊</button>
+      </div>
+    </div>
+
+    <!-- ============ Sticker Palette ============ -->
+    <div class="sticker-palette" id="sticker-palette">
+      <!-- Recommended section (fixed left) -->
+      <div class="palette-recommended" id="palette-recommended"></div>
+      <div class="palette-divider"></div>
+      <!-- All stickers scrollable -->
+      <div class="palette-scroll" id="palette-scroll"></div>
     </div>
 
     <!-- ============ Bottom Bar ============ -->
@@ -886,46 +777,12 @@
       <button class="capture-btn" id="capture-btn" aria-label="撮影"></button>
     </div>
 
-    <!-- ============ Drawer ============ -->
-    <div class="drawer-overlay" id="drawer-overlay"></div>
-    <aside class="drawer" id="drawer">
-      <div class="drawer-header">
-        <div class="drawer-title">Suma SeaWorld</div>
-        <div class="drawer-subtitle">AR PHOTO BOOTH</div>
-      </div>
-      <nav class="drawer-menu">
-        <div class="menu-section-label">ステッカーをえらぶ</div>
-        <div class="menu-item" data-category="static">
-          <div class="menu-item-icon">🐠</div>
-          <div>ステッカー</div>
-        </div>
-        <div class="menu-item" data-category="animated">
-          <div class="menu-item-icon">🐬</div>
-          <div>うごくステッカー</div>
-        </div>
-
-        <div class="menu-section-label">そのた</div>
-        <div class="menu-item" id="clear-all">
-          <div class="menu-item-icon">🗑️</div>
-          <div>ぜんぶクリア</div>
-        </div>
-      </nav>
-      <div class="drawer-footer">
-        © Suma Seaworld Hotel
-      </div>
-    </aside>
-
-    <!-- ============ Sticker Tray ============ -->
-    <div class="sticker-tray" id="sticker-tray">
-      <div class="tray-handle"></div>
-      <div class="tray-header">
-        <div class="tray-title">
-          <span id="tray-title-text">ステッカー</span>
-          <small id="tray-title-sub">タップでついか・ドラッグでいどう</small>
-        </div>
-        <button class="tray-close" id="tray-close">✕</button>
-      </div>
-      <div class="sticker-grid" id="sticker-grid"></div>
+    <!-- ============ Floating Controls ============ -->
+    <div id="floating-controls">
+      <button class="float-btn" id="fb-plus">➕</button>
+      <button class="float-btn" id="fb-minus">➖</button>
+      <button class="float-btn" id="fb-rotate">🔄</button>
+      <button class="float-btn" id="fb-delete">🗑️</button>
     </div>
 
     <!-- ============ Preview ============ -->
@@ -959,89 +816,32 @@
     /* ============================================
        Sticker Definitions
        ============================================ */
-    /* ============================================
-       Sticker Definitions
-
-       各ステッカーは以下のどちらかの形式で指定:
-         { emoji: '🐬' }           ← 絵文字
-         { src: 'stickers/orca.png' }  ← PNG画像 (推奨サイズ: 256x256以上)
-
-       両方とも anim プロパティでアニメ追加可能:
-         { src: 'stickers/dolphin.png', anim: 'swim' }
-         アニメ種類: 'swim' | 'bob' | 'spin3d' | 'pulse' | 'wiggle'
-
-       PNGを使う場合: index.html と同じ階層に stickers/ フォルダを作って
-       PNG画像を入れて、下記の src パスを書き換えてください。
-       ============================================ */
-    const STICKER_SETS = {
-      static: {
-        title: 'ステッカー',
-        sub: 'うみのなかまたち',
-        items: [
-          // ▼ PNG画像に置き換える例 (stickers/ フォルダにファイルを置いてコメントを外す)
-          // { src: 'stickers/orca.png' },
-          // { src: 'stickers/dolphin.png' },
-          // { src: 'stickers/penguin.png' },
-
-          // ▼ 現在は絵文字 (PNG用意できたら上の例のように置き換え)
-          { src: 'img/しゃち-sticker.png' }, { src: 'img/イルカ-sticker.png' }, { src: 'img/シャチ1-sticker.png' },
-          { src: 'img/シャチ2-sticker.png' }, { src: 'img/orca-sticker.png' },
-          { src: 'img/マゼランペンギン-sticker.png' }, { src: 'img/アザラシ-sticker.png' }, { src: 'img/アシカ-sticker.png' }, { src: 'img/ウミガメ-sticker.png' },
-          { emoji: '🐙' }, { emoji: '🦑' }, { emoji: '🦐' }, { emoji: '🦞' },
-          { emoji: '🦀' }, { emoji: '🐚' }, { emoji: '🐢' }, { emoji: '🦭' },
-          { emoji: '🐧' }, { emoji: '⭐' }, { emoji: '💙' }, { emoji: '🩵' },
-          { emoji: '🌊' }, { emoji: '🫧' }, { emoji: '🏖️' }, { emoji: '☀️' },
-          { emoji: '🌴' }, { emoji: '🥽' },
-        ]
-      },
-      animated: {
-        title: 'うごくステッカー',
-        sub: 'タップでついか・うごくよ！',
-        items: [
-          // ▼ PNG画像にアニメ付きの例:
-          // { src: 'stickers/orca.png', anim: 'swim' },
-          // { src: 'stickers/dolphin.png', anim: 'swim' },
-
-          { emoji: '🐬', anim: 'swim' },
-          { emoji: '🐠', anim: 'swim' },
-          { emoji: '🐟', anim: 'swim' },
-          { emoji: '🦈', anim: 'swim' },
-          { emoji: '🐳', anim: 'swim' },
-          { emoji: '🐢', anim: 'swim' },
-          { emoji: '🐡', anim: 'swim' },
-          { emoji: '🐙', anim: 'bob' },
-          { emoji: '🪼', anim: 'bob' },
-          { emoji: '🫧', anim: 'bob' },
-          { emoji: '🦭', anim: 'bob' },
-          { emoji: '🐧', anim: 'wiggle' },
-          { emoji: '🦀', anim: 'wiggle' },
-          { emoji: '⭐', anim: 'pulse' },
-          { emoji: '💙', anim: 'pulse' },
-          { emoji: '🩵', anim: 'pulse' },
-        ]
-      },
-      '3d': {
-        title: '3Dステッカー',
-        sub: 'くるくるかいてん！',
-        items: [
-          // ▼ PNG画像でも回転OK:
-          // { src: 'stickers/orca.png', anim: 'spin3d' },
-
-          { emoji: '🐬', anim: 'spin3d' },
-          { emoji: '🐳', anim: 'spin3d' },
-          { emoji: '🐠', anim: 'spin3d' },
-          { emoji: '🦈', anim: 'spin3d' },
-          { emoji: '🐢', anim: 'spin3d' },
-          { emoji: '🐙', anim: 'spin3d' },
-          { emoji: '⭐', anim: 'spin3d' },
-          { emoji: '💎', anim: 'spin3d' },
-          { emoji: '🩵', anim: 'spin3d' },
-          { emoji: '🌊', anim: 'spin3d' },
-          { emoji: '🐚', anim: 'spin3d' },
-          { emoji: '🦑', anim: 'spin3d' },
-        ]
-      }
-    };
+    const STICKERS = [
+      { emoji: '🐬', anim: 'swim',   recommended: true },
+      { emoji: '🌊', anim: 'pulse',  recommended: true },
+      { emoji: '⭐', anim: 'pulse',  recommended: true },
+      { emoji: '🐳', anim: 'swim' },
+      { emoji: '🦈', anim: 'swim' },
+      { emoji: '🐠', anim: 'swim' },
+      { emoji: '🐟', anim: 'swim' },
+      { emoji: '🐡', anim: 'swim' },
+      { emoji: '🐢', anim: 'swim' },
+      { emoji: '🦭', anim: 'swim' },
+      { emoji: '🐋', anim: 'swim' },
+      { emoji: '🪼', anim: 'bob' },
+      { emoji: '🐙', anim: 'bob' },
+      { emoji: '🫧', anim: 'bob' },
+      { emoji: '🦑', anim: 'bob' },
+      { emoji: '🐧', anim: 'wiggle' },
+      { emoji: '🦀', anim: 'wiggle' },
+      { emoji: '🐚', anim: 'wiggle' },
+      { emoji: '🦐', anim: 'wiggle' },
+      { emoji: '💙', anim: 'pulse' },
+      { emoji: '🩵', anim: 'pulse' },
+      { emoji: '🏖️', anim: 'pulse' },
+      { emoji: '☀️', anim: 'pulse' },
+      { emoji: '🌴', anim: 'pulse' },
+    ];
 
     /* ============================================
        State
@@ -1060,8 +860,7 @@
        Preload PNG sticker images
        ============================================ */
     function preloadImages() {
-      const allItems = Object.values(STICKER_SETS).flatMap(s => s.items);
-      const srcs = [...new Set(allItems.filter(i => i.src).map(i => i.src))];
+      const srcs = [...new Set(STICKERS.filter(i => i.src).map(i => i.src))];
       srcs.forEach(src => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
@@ -1117,6 +916,65 @@
     }
 
     /* ============================================
+       Audio (Web Audio API)
+       ============================================ */
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return audioCtx;
+    }
+
+    function playStickerSound() {
+      if (muted) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(523, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(659, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.2);
+      } catch(e) {}
+    }
+
+    /* ============================================
+       Mute
+       ============================================ */
+    let muted = sessionStorage.getItem('muted') === '1';
+    function updateMuteBtn() {
+      $('mute-btn').textContent = muted ? '🔇' : '🔊';
+    }
+    $('mute-btn').addEventListener('click', () => {
+      muted = !muted;
+      sessionStorage.setItem('muted', muted ? '1' : '0');
+      updateMuteBtn();
+    });
+    updateMuteBtn();
+
+    /* ============================================
+       Sparkle Particles
+       ============================================ */
+    function spawnParticles(x, y) {
+      for (let i = 0; i < 8; i++) {
+        const p = document.createElement('div');
+        p.className = 'sparkle-particle';
+        p.textContent = '✨';
+        const angle = (i / 8) * Math.PI * 2;
+        const dist = 60 + Math.random() * 40;
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+        p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+        p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 700);
+      }
+    }
+
+    /* ============================================
        Welcome / Start
        ============================================ */
     $('start-btn').addEventListener('click', async () => {
@@ -1126,13 +984,27 @@
       $('loading').classList.remove('hidden');
       await startCamera();
       $('loading').classList.add('hidden');
+
+      // Auto-place 2 recommended stickers
+      const recommended = STICKERS.filter(s => s.recommended);
+      const picks = recommended.sort(() => Math.random() - 0.5).slice(0, 2);
+      const sw = window.innerWidth;
+      const sh = window.innerHeight;
+      const positions = [
+        { x: sw * 0.25, y: sh * 0.25 },
+        { x: sw * 0.75, y: sh * 0.65 },
+      ];
+      picks.forEach((item, i) => {
+        addSticker(item, { autoPlace: true, x: positions[i].x, y: positions[i].y, scale: 0.85 });
+      });
+
       showHint();
     });
 
     function showHint() {
       const hint = document.createElement('div');
       hint.className = 'hint';
-      hint.textContent = '☰ メニューからステッカーをえらべるよ！';
+      hint.textContent = '下のパレットからステッカーをえらべるよ！';
       document.getElementById('app').appendChild(hint);
       setTimeout(() => hint.remove(), 5000);
     }
@@ -1178,6 +1050,17 @@
     });
 
     /* ============================================
+       Clear button
+       ============================================ */
+    $('clear-btn').addEventListener('click', () => {
+      haptic();
+      $('sticker-layer').innerHTML = '';
+      selectedSticker = null;
+      hideFloatingControls();
+      showToast('クリアしました');
+    });
+
+    /* ============================================
        Camera Zoom
        ============================================ */
     function setZoom(z) {
@@ -1197,49 +1080,9 @@
     });
 
     /* ============================================
-       Drawer
+       Sticker visual helpers
        ============================================ */
-    const drawer = $('drawer');
-    const drawerOverlay = $('drawer-overlay');
-
-    function openDrawer() {
-      drawer.classList.add('open');
-      drawerOverlay.classList.add('open');
-      haptic();
-    }
-    function closeDrawer() {
-      drawer.classList.remove('open');
-      drawerOverlay.classList.remove('open');
-    }
-
-    $('menu-btn').addEventListener('click', openDrawer);
-    drawerOverlay.addEventListener('click', closeDrawer);
-
-    document.querySelectorAll('.menu-item[data-category]').forEach(item => {
-      item.addEventListener('click', () => {
-        const cat = item.dataset.category;
-        haptic();
-        closeDrawer();
-        setTimeout(() => openTray(cat), 200);
-      });
-    });
-
-    $('clear-all').addEventListener('click', () => {
-      haptic();
-      $('sticker-layer').innerHTML = '';
-      selectedSticker = null;
-      closeDrawer();
-      showToast('クリアしました');
-    });
-
-    /* ============================================
-       Sticker Tray
-       ============================================ */
-    const tray = $('sticker-tray');
-    const trayGrid = $('sticker-grid');
-
     function createStickerVisual(item) {
-      // Returns the inner element (img or span) for a sticker item
       if (item.src) {
         const img = document.createElement('img');
         img.src = item.src;
@@ -1255,29 +1098,6 @@
       }
     }
 
-    function openTray(category) {
-      const set = STICKER_SETS[category];
-      if (!set) return;
-      $('tray-title-text').textContent = set.title;
-      $('tray-title-sub').textContent = set.sub;
-      trayGrid.innerHTML = '';
-      set.items.forEach(item => {
-        const btn = document.createElement('button');
-        btn.className = 'sticker-option';
-        const inner = createStickerVisual(item);
-        if (item.anim) {
-          inner.style.animation = getAnimationStyle(item.anim);
-        }
-        btn.appendChild(inner);
-        btn.addEventListener('click', () => {
-          haptic();
-          addSticker(item);
-        });
-        trayGrid.appendChild(btn);
-      });
-      tray.classList.add('open');
-    }
-
     function getAnimationStyle(anim) {
       const map = {
         bob: 'bob 2s ease-in-out infinite',
@@ -1289,14 +1109,143 @@
       return map[anim] || '';
     }
 
-    $('tray-close').addEventListener('click', () => {
-      tray.classList.remove('open');
+    /* ============================================
+       Build Sticker Palette
+       ============================================ */
+    function buildPalette() {
+      const recContainer = $('palette-recommended');
+      const scrollContainer = $('palette-scroll');
+
+      STICKERS.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'palette-btn' + (item.recommended ? ' recommended' : '');
+
+        const inner = createStickerVisual(item);
+        if (item.anim) inner.style.animation = getAnimationStyle(item.anim);
+
+        if (item.recommended) {
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;';
+          wrap.appendChild(inner);
+          const label = document.createElement('div');
+          label.className = 'palette-rec-label';
+          label.textContent = '✨';
+          wrap.appendChild(label);
+          btn.appendChild(wrap);
+        } else {
+          btn.appendChild(inner);
+        }
+
+        btn.addEventListener('click', () => {
+          haptic();
+          addSticker(item);
+        });
+
+        if (item.recommended) {
+          recContainer.appendChild(btn);
+        } else {
+          scrollContainer.appendChild(btn);
+        }
+      });
+    }
+    buildPalette();
+
+    /* ============================================
+       Floating Controls
+       ============================================ */
+    let floatTarget = null;
+    let deleteHoldTimer = null;
+
+    function showFloatingControls(el) {
+      floatTarget = el;
+      $('floating-controls').classList.add('visible');
+      positionFloatingControls(el);
+    }
+
+    function hideFloatingControls() {
+      floatTarget = null;
+      $('floating-controls').classList.remove('visible');
+    }
+
+    function positionFloatingControls(el) {
+      if (!el || !el._state) return;
+      const s = el._state;
+      const R = 64;
+      $('fb-plus').style.cssText   = `left:${s.x + R}px; top:${s.y}px;`;
+      $('fb-minus').style.cssText  = `left:${s.x - R}px; top:${s.y}px;`;
+      $('fb-rotate').style.cssText = `left:${s.x}px; top:${s.y + R}px;`;
+      $('fb-delete').style.cssText = `left:${s.x + 50}px; top:${s.y - 50}px;`;
+    }
+
+    $('fb-plus').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!floatTarget) return;
+      haptic(6);
+      floatTarget._state.scale = Math.min(5, floatTarget._state.scale * 1.25);
+      updateStickerTransform(floatTarget);
     });
+
+    $('fb-minus').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!floatTarget) return;
+      haptic(6);
+      floatTarget._state.scale = Math.max(0.3, floatTarget._state.scale * 0.8);
+      updateStickerTransform(floatTarget);
+    });
+
+    $('fb-rotate').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!floatTarget) return;
+      haptic(6);
+      floatTarget._state.rotation += 15;
+      updateStickerTransform(floatTarget);
+    });
+
+    // Long press (1s) to delete
+    $('fb-delete').addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      deleteHoldTimer = setTimeout(() => {
+        if (!floatTarget) return;
+        haptic(20);
+        const deleted = floatTarget;
+        const deletedItem = {
+          emoji: deleted._state.emoji,
+          src: deleted._state.src,
+          anim: deleted._state.anim
+        };
+        deleted.remove();
+        hideFloatingControls();
+        selectedSticker = null;
+        showUndoToast(deletedItem);
+      }, 1000);
+    });
+    $('fb-delete').addEventListener('pointerup', () => clearTimeout(deleteHoldTimer));
+    $('fb-delete').addEventListener('pointercancel', () => clearTimeout(deleteHoldTimer));
+
+    /* ============================================
+       Undo Toast
+       ============================================ */
+    let lastDeletedItem = null;
+    function showUndoToast(item) {
+      lastDeletedItem = item;
+      const t = $('toast');
+      t.innerHTML = 'けした！ <button id="undo-btn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:4px 12px;border-radius:20px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-left:8px;">もどす</button>';
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+
+      $('undo-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (lastDeletedItem) addSticker(lastDeletedItem, { autoPlace: false });
+        t.classList.remove('show');
+      });
+    }
 
     /* ============================================
        Sticker creation
        ============================================ */
-    function addSticker(item) {
+    function addSticker(item, opts = {}) {
+      const autoPlace = opts.autoPlace || false;
       const layer = $('sticker-layer');
       const el = document.createElement('div');
       el.className = 'sticker';
@@ -1305,24 +1254,14 @@
       const inner = createStickerVisual(item);
       el.appendChild(inner);
 
-      const del = document.createElement('div');
-      del.className = 'delete-btn';
-      del.textContent = '✕';
-      del.addEventListener('pointerdown', (e) => e.stopPropagation());
-      del.addEventListener('click', (e) => {
-        e.stopPropagation();
-        haptic();
-        el.remove();
-        if (selectedSticker === el) selectedSticker = null;
-      });
-      el.appendChild(del);
+      const cx = opts.x !== undefined ? opts.x : window.innerWidth / 2;
+      const cy = opts.y !== undefined ? opts.y : window.innerHeight / 2 + (Math.random() - 0.5) * 80;
+      const initScale = opts.scale !== undefined ? opts.scale : 1;
 
-      const cx = window.innerWidth / 2;
-      const cy = window.innerHeight / 2 + (Math.random() - 0.5) * 80;
       el._state = {
         x: cx,
         y: cy,
-        scale: 1,
+        scale: initScale,
         rotation: 0,
         emoji: item.emoji || null,
         src: item.src || null,
@@ -1334,6 +1273,18 @@
       layer.appendChild(el);
       makeStickerInteractive(el);
       selectSticker(el);
+
+      if (!autoPlace) {
+        // Bounce animation
+        el.style.animation = 'stickerBounce 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards';
+        setTimeout(() => { el.style.animation = ''; }, 350);
+        // Sound
+        playStickerSound();
+        // Particles
+        spawnParticles(cx, cy);
+        // Haptic
+        haptic(12);
+      }
     }
 
     function updateStickerTransform(el) {
@@ -1341,6 +1292,8 @@
       el.style.left = s.x + 'px';
       el.style.top = s.y + 'px';
       el.style.transform = `translate(-50%, -50%) scale(${s.scale}) rotate(${s.rotation}deg)`;
+      // Keep floating controls in sync
+      if (floatTarget === el) positionFloatingControls(el);
     }
 
     function selectSticker(el) {
@@ -1350,8 +1303,10 @@
       selectedSticker = el;
       if (el) {
         el.classList.add('selected');
-        // Bring to top using z-index (safe during touch)
         el.style.zIndex = ++zCounter;
+        showFloatingControls(el);
+      } else {
+        hideFloatingControls();
       }
     }
 
@@ -1360,6 +1315,7 @@
       if (selectedSticker) {
         selectedSticker.classList.remove('selected');
         selectedSticker = null;
+        hideFloatingControls();
       }
     });
 
@@ -1375,11 +1331,11 @@
       let startAngle = 0;
 
       function onTouchStart(e) {
-        // Don't start if tapping delete button
-        if (e.target.classList.contains('delete-btn')) return;
         e.preventDefault();
         e.stopPropagation();
         selectSticker(el);
+        // Hide float controls during active touch
+        $('floating-controls').classList.remove('visible');
 
         if (e.touches.length === 1) {
           mode = 'drag';
@@ -1437,6 +1393,10 @@
       function onTouchEnd(e) {
         if (e.touches.length === 0) {
           mode = null;
+          // Restore float controls if this sticker is still selected
+          if (selectedSticker === el) {
+            showFloatingControls(el);
+          }
         } else if (e.touches.length === 1 && mode === 'transform') {
           // Switch to drag mode with remaining finger
           mode = 'drag';
@@ -1456,7 +1416,6 @@
       let mouseStart = null;
       let mouseStartState = null;
       el.addEventListener('mousedown', (e) => {
-        if (e.target.classList.contains('delete-btn')) return;
         e.preventDefault();
         e.stopPropagation();
         selectSticker(el);
@@ -1484,6 +1443,7 @@
       // Deselect to remove dashed outline in capture
       const wasSelected = selectedSticker;
       if (wasSelected) wasSelected.classList.remove('selected');
+      hideFloatingControls();
 
       // Flash effect
       const flash = $('flash');
@@ -1495,15 +1455,19 @@
         capture().then(blob => {
           if (!blob) {
             showToast('撮影にしっぱいしました');
-            if (wasSelected) wasSelected.classList.add('selected');
+            if (wasSelected) {
+              wasSelected.classList.add('selected');
+              showFloatingControls(wasSelected);
+            }
             return;
           }
           lastCapturedBlob = blob;
           const url = URL.createObjectURL(blob);
           $('preview-image').src = url;
           $('preview-screen').classList.add('open');
-          tray.classList.remove('open');
-          if (wasSelected) wasSelected.classList.add('selected');
+          if (wasSelected) {
+            wasSelected.classList.add('selected');
+          }
         });
       }, 80);
     });
