@@ -249,12 +249,12 @@
       position: absolute;
       left: 0;
       right: 0;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 200px);
-      height: 92px;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 190px);
+      height: 110px;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
-      padding: 0 14px;
+      padding: 4px 14px 0;
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
@@ -265,6 +265,24 @@
       transform: translateY(30px);
       transition: opacity 0.3s, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       touch-action: pan-x;
+    }
+
+    /* 「おすすめ」ラベル */
+    .palette-rec-wrap {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .recommend-label {
+      font-size: 11px;
+      color: rgb(255, 215, 0);
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      padding-left: 4px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
     }
 
     .palette-scroll::-webkit-scrollbar { display: none; }
@@ -809,7 +827,7 @@
       font-size: 11px;
       color: rgba(255,255,255,0.85);
       letter-spacing: 0.05em;
-      z-index: 25;
+      z-index: 700;
       border: 1px solid rgba(255,255,255,0.15);
       white-space: nowrap;
       animation: hintFade 5s ease-in-out forwards;
@@ -924,20 +942,21 @@
        Sticker Definitions
        ============================================ */
     const STICKERS = [
-      // ⭐ おすすめ
-      { emoji: '🐬', anim: 'swim',  recommended: true },
-      { emoji: '🌊', anim: 'pulse', recommended: true },
-      { emoji: '⭐', anim: 'pulse', recommended: true },
+      // ⭐ おすすめ（左→中→右の順）
+      { src: 'img/しゃち-sticker.png',  anim: 'swim', recommended: true },
+      { src: 'img/イルカ-sticker.png',   anim: 'swim', recommended: true },
+      { src: 'img/シャチ2-sticker.png',  anim: 'swim', recommended: true },
       // PNG画像ステッカー
-      { src: 'img/しゃち-sticker.png',          anim: 'swim' },
-      { src: 'img/イルカ-sticker.png',           anim: 'swim' },
       { src: 'img/シャチ1-sticker.png',          anim: 'swim' },
-      { src: 'img/シャチ2-sticker.png',          anim: 'swim' },
       { src: 'img/orca-sticker.png',             anim: 'swim' },
       { src: 'img/アザラシ-sticker.png',         anim: 'bob' },
       { src: 'img/アシカ-sticker.png',           anim: 'swim' },
       { src: 'img/ウミガメ-sticker.png',         anim: 'swim' },
       { src: 'img/マゼランペンギン-sticker.png', anim: 'wiggle' },
+      // 絵文字（補助）
+      { emoji: '🐬', anim: 'swim' },
+      { emoji: '🌊', anim: 'pulse' },
+      { emoji: '⭐', anim: 'pulse' },
       // 絵文字ステッカー
       { emoji: '🐳', anim: 'swim' },
       { emoji: '🦈', anim: 'swim' },
@@ -1224,6 +1243,7 @@
        ============================================ */
     function buildPalette() {
       const scroll = $('palette-scroll');
+      let labelAdded = false;
       STICKERS.forEach(item => {
         const btn = document.createElement('button');
         btn.className = 'palette-btn' + (item.recommended ? ' recommended' : '');
@@ -1234,7 +1254,20 @@
           haptic();
           addSticker(item);
         });
-        scroll.appendChild(btn);
+        // 一番左のおすすめステッカーには「おすすめ」ラベルを下に表示
+        if (item.recommended && !labelAdded) {
+          const wrap = document.createElement('div');
+          wrap.className = 'palette-rec-wrap';
+          wrap.appendChild(btn);
+          const label = document.createElement('div');
+          label.className = 'recommend-label';
+          label.textContent = 'おすすめ';
+          wrap.appendChild(label);
+          scroll.appendChild(wrap);
+          labelAdded = true;
+        } else {
+          scroll.appendChild(btn);
+        }
       });
     }
     buildPalette();
