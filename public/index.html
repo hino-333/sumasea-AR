@@ -205,38 +205,66 @@
     }
 
     /* ============ Sticker Palette ============ */
-    .sticker-palette {
+    /* 背景: 一番下までまんべんなく、最背面（撮影/ステッカーボタンの下） */
+    .palette-bg {
       position: absolute;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 192px);
       left: 0;
       right: 0;
-      height: 210px;
-      background: rgba(0, 8, 24, 0.82);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-top: 1px solid rgba(255,255,255,0.12);
-      z-index: 29;
-      overflow: hidden;
+      bottom: 0;
+      height: 290px;
+      background: rgba(0, 14, 35, 0.45);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      z-index: 25;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
     }
 
-    .palette-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      padding: 10px;
-      overflow-y: auto;
-      height: 100%;
+    .palette-bg.visible {
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* 横スクロール部分: 拡大パネルより上 */
+    .palette-scroll {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 200px);
+      height: 92px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      overflow-x: auto;
+      overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
+      z-index: 36;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.3s, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      touch-action: pan-x;
     }
 
-    .palette-grid::-webkit-scrollbar { display: none; }
+    .palette-scroll::-webkit-scrollbar { display: none; }
+
+    .palette-scroll.visible {
+      pointer-events: auto;
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     .palette-btn {
-      aspect-ratio: 1;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
+      flex: 0 0 auto;
+      width: 76px;
+      height: 76px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -248,22 +276,89 @@
 
     .palette-btn:active {
       transform: scale(0.88);
-      background: rgba(0, 212, 255, 0.25);
+      background: rgba(0, 212, 255, 0.3);
     }
 
     .palette-btn.recommended {
-      background: rgba(255, 215, 0, 0.1);
-      border-color: rgba(255, 215, 0, 0.35);
+      background: rgba(255, 215, 0, 0.12);
+      border-color: rgba(255, 215, 0, 0.4);
     }
 
     .palette-btn .emoji-inner {
-      font-size: 36px;
+      font-size: 40px;
     }
 
     .palette-btn .sticker-img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+    }
+
+    /* 閉じるボタン: パレットの右上 */
+    .palette-close {
+      position: absolute;
+      bottom: 240px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 36;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .palette-close.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ステッカー表示トグルボタン: 右下 */
+    .sticker-toggle-btn {
+      position: absolute;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 42px);
+      right: 16px;
       width: 56px;
       height: 56px;
-      object-fit: contain;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      color: white;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 35;
+      pointer-events: auto;
+      transition: transform 0.15s, background 0.2s;
+    }
+
+    .sticker-toggle-btn:active {
+      transform: scale(0.9);
+      background: rgba(0, 212, 255, 0.35);
+    }
+
+    /* パレット表示中は他の操作を無効化 */
+    body.palette-open .top-bar,
+    body.palette-open .top-bar *,
+    body.palette-open .bottom-bar,
+    body.palette-open .bottom-bar *,
+    body.palette-open #sticker-layer,
+    body.palette-open #sticker-layer .sticker {
+      pointer-events: none !important;
     }
 
     /* ============ Bottom Bar ============ */
@@ -734,9 +829,10 @@
     </div>
 
     <!-- ============ Sticker Palette ============ -->
-    <div class="sticker-palette" id="sticker-palette">
-      <div class="palette-grid" id="palette-grid"></div>
-    </div>
+    <div class="palette-bg" id="palette-bg"></div>
+    <div class="palette-scroll" id="palette-scroll"></div>
+    <button class="palette-close" id="palette-close" aria-label="閉じる">✕</button>
+    <button class="sticker-toggle-btn" id="sticker-toggle-btn" aria-label="ステッカー">🐬</button>
 
     <!-- ============ Bottom Bar ============ -->
     <div class="bottom-bar">
@@ -1088,7 +1184,7 @@
        Build Sticker Palette
        ============================================ */
     function buildPalette() {
-      const grid = $('palette-grid');
+      const scroll = $('palette-scroll');
       STICKERS.forEach(item => {
         const btn = document.createElement('button');
         btn.className = 'palette-btn' + (item.recommended ? ' recommended' : '');
@@ -1099,10 +1195,43 @@
           haptic();
           addSticker(item);
         });
-        grid.appendChild(btn);
+        scroll.appendChild(btn);
       });
     }
     buildPalette();
+
+    /* ============================================
+       Palette open/close
+       ============================================ */
+    let paletteOpen = false;
+    function openPalette() {
+      if (paletteOpen) return;
+      paletteOpen = true;
+      $('palette-bg').classList.add('visible');
+      $('palette-scroll').classList.add('visible');
+      $('palette-close').classList.add('visible');
+      document.body.classList.add('palette-open');
+      // 開く時は選択中のステッカーを解除
+      if (selectedSticker) {
+        selectedSticker.classList.remove('selected');
+        selectedSticker = null;
+      }
+      hideFloatingControls();
+      haptic();
+    }
+    function closePalette() {
+      if (!paletteOpen) return;
+      paletteOpen = false;
+      $('palette-bg').classList.remove('visible');
+      $('palette-scroll').classList.remove('visible');
+      $('palette-close').classList.remove('visible');
+      document.body.classList.remove('palette-open');
+    }
+    $('sticker-toggle-btn').addEventListener('click', () => {
+      if (paletteOpen) closePalette();
+      else openPalette();
+    });
+    $('palette-close').addEventListener('click', closePalette);
 
     /* ============================================
        Floating Controls
