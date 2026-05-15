@@ -1315,15 +1315,25 @@
     function createStickerVisual(item) {
       if (item.src3d) {
         const mv = document.createElement('model-viewer');
-        mv.setAttribute('src', item.src3d);
+        // 日本語ファイル名対策: URLエンコード
+        mv.setAttribute('src', encodeURI(item.src3d));
         mv.setAttribute('camera-controls', '');
         mv.setAttribute('disable-pan', '');
-        mv.setAttribute('disable-zoom', '');
         mv.setAttribute('interaction-prompt', 'none');
-        mv.setAttribute('shadow-intensity', '0');
-        mv.setAttribute('exposure', '1');
+        // デフォルトライティング (neutral環境マップ) でモデル可視化
+        mv.setAttribute('environment-image', 'neutral');
+        mv.setAttribute('exposure', '1.2');
+        mv.setAttribute('shadow-intensity', '0.6');
         mv.setAttribute('autoplay', '');
+        mv.setAttribute('camera-orbit', '0deg 75deg auto');
         mv.classList.add('sticker-3d');
+        // デバッグ用エラーログ
+        mv.addEventListener('error', (e) => {
+          console.error('model-viewer error:', e, 'src:', item.src3d);
+        });
+        mv.addEventListener('load', () => {
+          console.log('model-viewer loaded:', item.src3d);
+        });
         return mv;
       }
       if (item.src) {
