@@ -11,6 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Pacifico&display=swap" rel="stylesheet">
+  <!-- 3Dステッカー用 model-viewer -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -116,6 +118,28 @@
       user-select: none;
       -webkit-user-drag: none;
       display: block;
+    }
+
+    /* 3Dステッカー (model-viewer) */
+    model-viewer.sticker-3d {
+      width: 100px;
+      height: 100px;
+      background: transparent;
+      --poster-color: transparent;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* 選択中のみ回転操作を許可 */
+    .sticker.selected model-viewer.sticker-3d {
+      pointer-events: auto;
+    }
+
+    /* パレット内のサムネは小さく */
+    .palette-btn model-viewer.sticker-3d {
+      width: 58px;
+      height: 58px;
+      pointer-events: none;
     }
 
     /* Animations */
@@ -1021,6 +1045,8 @@
       { src: 'img/しゃち-sticker.png',  anim: 'swim', recommended: true },
       { src: 'img/イルカ-sticker.png',   anim: 'swim', recommended: true },
       { src: 'img/シャチ2-sticker.png',  anim: 'swim', recommended: true },
+      // 3Dステッカー（glb）
+      { src3d: 'img/仮の3D.glb' },
       // PNG画像ステッカー
       { src: 'img/シャチ1-sticker.png',          anim: 'swim' },
       { src: 'img/orca-sticker.png',             anim: 'swim' },
@@ -1287,6 +1313,19 @@
        Sticker visual helpers
        ============================================ */
     function createStickerVisual(item) {
+      if (item.src3d) {
+        const mv = document.createElement('model-viewer');
+        mv.setAttribute('src', item.src3d);
+        mv.setAttribute('camera-controls', '');
+        mv.setAttribute('disable-pan', '');
+        mv.setAttribute('disable-zoom', '');
+        mv.setAttribute('interaction-prompt', 'none');
+        mv.setAttribute('shadow-intensity', '0');
+        mv.setAttribute('exposure', '1');
+        mv.setAttribute('autoplay', '');
+        mv.classList.add('sticker-3d');
+        return mv;
+      }
       if (item.src) {
         const img = document.createElement('img');
         img.src = item.src;
@@ -1495,6 +1534,7 @@
         rotation: 0,
         emoji: item.emoji || null,
         src: item.src || null,
+        src3d: item.src3d || null,
         anim: item.anim || null
       };
       el.style.zIndex = ++zCounter;
@@ -1769,7 +1809,15 @@
         ctx.shadowBlur = 12;
         ctx.shadowOffsetY = 4;
 
-        if (s.src && imageCache.has(s.src)) {
+        if (s.src3d) {
+          // 3D model sticker: shadow DOM canvas を直接描画
+          const mv = el.querySelector('model-viewer');
+          const mvCanvas = mv && mv.shadowRoot && mv.shadowRoot.querySelector('canvas');
+          const size = 100;
+          if (mvCanvas) {
+            ctx.drawImage(mvCanvas, -size / 2, -size / 2, size, size);
+          }
+        } else if (s.src && imageCache.has(s.src)) {
           // PNG image sticker
           const img = imageCache.get(s.src);
           const size = 100; // matches .sticker-img CSS size
