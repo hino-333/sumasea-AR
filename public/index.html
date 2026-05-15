@@ -399,6 +399,14 @@
       background: rgba(0, 212, 255, 0.35);
     }
 
+    .sticker-toggle-icon {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+
     /* パレット表示中は他の操作を無効化 */
     body.palette-open .top-bar,
     body.palette-open .top-bar *,
@@ -894,7 +902,9 @@
     <div class="palette-scroll" id="palette-scroll"></div>
     <button class="palette-close" id="palette-close" aria-label="閉じる">✕</button>
     <div class="sticker-toggle-wrap">
-      <button class="sticker-toggle-btn" id="sticker-toggle-btn" aria-label="ステッカー">🐬</button>
+      <button class="sticker-toggle-btn" id="sticker-toggle-btn" aria-label="ステッカー">
+        <img src="img/しゃち-sticker.png" alt="ステッカー" class="sticker-toggle-icon">
+      </button>
       <div class="btn-label">ステッカー</div>
     </div>
 
@@ -1147,7 +1157,7 @@
       const sh = window.innerHeight;
       const positions = [
         { x: sw * 0.25, y: sh * 0.25 },
-        { x: sw * 0.75, y: sh * 0.65 },
+        { x: sw * 0.75, y: sh * 0.4 },
       ];
       picks.forEach((item, i) => {
         addSticker(item, { autoPlace: true, x: positions[i].x, y: positions[i].y, scale: 0.85 });
@@ -1159,7 +1169,7 @@
     function showHint() {
       const hint = document.createElement('div');
       hint.className = 'hint';
-      hint.textContent = '下のパレットからステッカーをえらべるよ！';
+      hint.textContent = '右下の「ステッカー」からステッカーをえらんでね！';
       document.getElementById('app').appendChild(hint);
       setTimeout(() => hint.remove(), 5000);
     }
