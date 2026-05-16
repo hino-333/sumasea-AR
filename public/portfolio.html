@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ポートフォリオ提出管理</title>
+  <style>
+    :root {
+      --bg:      #f3f3f3;
+      --surface: #ffffff;
+      --border:  #e0e0e0;
+      --text:    #111111;
+      --muted:   #888888;
+      --green:   #16a34a;
+      --red:     #dc2626;
+      --blue:    #2563eb;
+      --hg:      #22c55e;
+      --hr:      #f87171;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:      #0c0c0c;
+        --surface: #171717;
+        --border:  #272727;
+        --text:    #ebebeb;
+        --muted:   #888888;
+        --green:   #4ade80;
+        --red:     #f87171;
+        --blue:    #60a5fa;
+        --hg:      #15803d;
+        --hr:      #991b1b;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 32px 16px 80px;
+    }
+    .wrap { max-width: 680px; margin: 0 auto; }
+
+    /* ── Header ── */
+    .hd { margin-bottom: 36px; }
+    .hd h1 { font-size: 18px; font-weight: 700; }
+    .hd p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Section ── */
+    .sec { margin-bottom: 36px; }
+    .lbl {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+
+    /* ── Setup ── */
+    .setup-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 40px 24px; text-align: center;
+    }
+    .setup-card p { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .stat  { background: var(--surface); border: 1px solid var(--border); padding: 16px 12px; }
+    .stat-v { font-size: 28px; font-weight: 800; line-height: 1; }
+    .stat-v.ok { color: var(--green); }
+    .stat-v.ng { color: var(--red); }
+    .stat-k { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Shame Wall ── */
+    .shame {
+      background: var(--surface);
+      border: 2px solid var(--red);
+      padding: 28px 20px; text-align: center;
+    }
+    .shame-n {
+      font-size: clamp(72px, 20vw, 120px);
+      font-weight: 900; color: var(--red);
+      line-height: 1; letter-spacing: -.04em;
+    }
+    .shame-unit { font-size: 18px; font-weight: 700; color: var(--red); }
+    .shame-txt  { font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+    /* ── Drop Zone ── */
+    .dz {
+      border: 2px dashed var(--border);
+      padding: 44px 20px; text-align: center;
+      cursor: pointer;
+      transition: border-color .1s, background .1s;
+      user-select: none;
+    }
+    .dz:hover      { border-color: var(--blue); }
+    .dz.over       { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 5%, transparent); }
+    .dz.done       { border-style: solid; border-color: var(--green); }
+    .dz img        { max-width: 200px; max-height: 200px; object-fit: contain; display: block; margin: 0 auto 12px; }
+    .dz .hint      { font-size: 13px; color: var(--muted); }
+    .dz .ok-lbl    { font-size: 13px; font-weight: 600; color: var(--green); margin-top: 6px; }
+    .dz .re-lbl    { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    #fi { display: none; }
+
+    /* ── Heatmap ── */
+    .cal-hd {
+      display: grid; grid-template-columns: repeat(7,1fr);
+      gap: 3px; margin-bottom: 3px;
+    }
+    .cal-hd span { text-align: center; font-size: 9px; color: var(--muted); }
+    .cal {
+      display: grid; grid-template-columns: repeat(7,1fr); gap: 3px;
+    }
+    .cc { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; }
+    .cc.pre  { color: var(--muted); opacity: .3; }
+    .cc.hit  { background: var(--hg); color: #fff; }
+    .cc.miss { background: var(--hr); color: #fff; opacity: .85; }
+    .cc.now  { background: var(--surface); border: 2px solid var(--muted); color: var(--text); }
+
+    /* ── Gallery ── */
+    .gallery { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+    .gi {
+      aspect-ratio: 1; position: relative; overflow: hidden;
+      background: var(--surface); border: 1px solid var(--border);
+    }
+    .gi img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gd {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,.55); color: #fff;
+      font-size: 9px; padding: 2px 4px; text-align: center;
+    }
+    .empty { font-size: 13px; color: var(--muted); }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      font: 13px/1 system-ui, sans-serif;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color .1s, background .1s, color .1s;
+    }
+    .btn:hover          { border-color: var(--muted); }
+    .btn.primary        { border-color: var(--blue); color: var(--blue); }
+    .btn.primary:hover  { background: var(--blue); color: #fff; }
+    .btn.danger         { border-color: var(--red); color: var(--red); }
+    .btn.danger:hover   { background: var(--red); color: #fff; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    @media (max-width: 460px) {
+      .gallery { grid-template-columns: repeat(3,1fr); }
+      .stat-v  { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hd">
+    <h1>ポートフォリオ提出管理</h1>
+    <p id="hd-date"></p>
+  </div>
+
+  <!-- ── Setup view ── -->
+  <div id="v-setup" style="display:none">
+    <div class="setup-card">
+      <p>開始日を登録して毎日の提出を記録しましょう。</p>
+      <button class="btn primary" id="btn-start">今日から開始する</button>
+    </div>
+  </div>
+
+  <!-- ── App view ── -->
+  <div id="v-app" style="display:none">
+
+    <div class="sec">
+      <div class="lbl">サマリー</div>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-v" id="s-today">—</div>
+          <div class="stat-k">今日</div>
+        </div>
+        <div class="stat">
+          <div class="stat-v ok" id="s-streak">0</div>
+          <div class="stat-k">連続達成日数</div>
+        </div>
+        <div class="stat">
+          <div class="stat-v" id="s-total">0</div>
+          <div class="stat-k">総提出数</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" id="shame-sec" style="display:none">
+      <div class="lbl">Shame Wall</div>
+      <div class="shame">
+        <div class="shame-n" id="shame-n">0</div>
+        <div class="shame-unit">日連続 未提出</div>
+        <div class="shame-txt" id="shame-txt"></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">今日の提出</div>
+      <div class="dz" id="dz"><div id="dz-in"></div></div>
+      <input type="file" id="fi" accept="image/*">
+    </div>
+
+    <div class="sec">
+      <div class="lbl">直近30日</div>
+      <div class="cal-hd">
+        <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+      </div>
+      <div class="cal" id="cal"></div>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">ギャラリー（最新12枚）</div>
+      <div id="gallery"></div>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">設定</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
+        開始日: <span id="start-txt"></span>
+      </p>
+      <div class="btn-row">
+        <button class="btn" id="btn-reset-start">開始日をリセット</button>
+        <button class="btn danger" id="btn-reset-all">全データをリセット</button>
+      </div>
+    </div>
+
+  </div><!-- /v-app -->
+</div><!-- /wrap -->
+
+<script>
+'use strict';
+
+/* ── Storage ── */
+const KEY = 'pf-tracker-v1';
+let db = { startDate: null, subs: {} };
+
+function load() {
+  try { const r = localStorage.getItem(KEY); if (r) db = JSON.parse(r); } catch(_) {}
+}
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify(db)); }
+  catch(_) { alert('保存失敗: ストレージ容量が不足しています。古い画像の削除をお試しください。'); }
+}
+
+/* ── Date helpers ── */
+function pad(n) { return String(n).padStart(2,'0'); }
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function dstr(d) {
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+
+/* ── Stats ── */
+function streak() {
+  if (!db.startDate) return 0;
+  let n = 0, d = new Date();
+  while (true) {
+    const s = dstr(d);
+    if (s < db.startDate) break;
+    if (db.subs[s]) { n++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return n;
+}
+
+function shame() {
+  const t = today();
+  if (!db.startDate || db.subs[t]) return 0;
+  let n = 0, d = new Date();
+  while (true) {
+    const s = dstr(d);
+    if (s < db.startDate) break;
+    if (!db.subs[s]) { n++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return n;
+}
+
+/* ── 9-level taunts ── */
+const TAUNTS = [
+  [1,  1,   'まだ提出してないぞ。今すぐやれ。'],
+  [2,  2,   '2日連続サボり。まだ間に合う。'],
+  [3,  3,   '三日坊主。やっぱりな。'],
+  [4,  6,   '1週間も経ってないのに崩壊。言い訳は？'],
+  [7,  7,   'まるまる1週間サボった。本気出す気あるの？'],
+  [8,  13,  '2週間近くサボり。才能の無駄遣いだよ。'],
+  [14, 20,  '2週間。もう諦めたの？'],
+  [21, 29,  '3週間以上。完全に心が折れてる。'],
+  [30, Infinity, '1ヶ月超え。もうやめたら？'],
+];
+function taunt(n) {
+  for (const [a, b, t] of TAUNTS) if (n >= a && n <= b) return t;
+  return '';
+}
+
+/* ── Render ── */
+function render() {
+  const t = today();
+  const done   = !!db.subs[t];
+  const str    = streak();
+  const shm    = shame();
+  const total  = Object.keys(db.subs).length;
+
+  // Summary
+  const sv = document.getElementById('s-today');
+  sv.textContent = done ? '✓' : '✗';
+  sv.className = 'stat-v ' + (done ? 'ok' : 'ng');
+  document.getElementById('s-streak').textContent = str;
+  document.getElementById('s-total').textContent  = total;
+
+  // Shame
+  const ss = document.getElementById('shame-sec');
+  if (shm > 0) {
+    ss.style.display = '';
+    document.getElementById('shame-n').textContent   = shm;
+    document.getElementById('shame-txt').textContent = taunt(shm);
+  } else {
+    ss.style.display = 'none';
+  }
+
+  // Drop zone
+  const dz  = document.getElementById('dz');
+  const dzIn = document.getElementById('dz-in');
+  if (done) {
+    dz.className = 'dz done';
+    dzIn.innerHTML =
+      `<img src="${db.subs[t].img}" alt="提出済み">` +
+      `<div class="ok-lbl">✓ 提出済み</div>` +
+      `<div class="re-lbl">クリックで更新</div>`;
+  } else {
+    dz.className = 'dz';
+    dzIn.innerHTML = `<div class="hint">クリック または ドラッグ&ドロップ<br>Ctrl+V 貼り付けも可</div>`;
+  }
+
+  renderCal();
+  renderGallery();
+
+  const st = document.getElementById('start-txt');
+  if (st) st.textContent = db.startDate || '—';
+}
+
+function renderCal() {
+  const cal  = document.getElementById('cal');
+  cal.innerHTML = '';
+  const t = today();
+
+  const first = new Date();
+  first.setDate(first.getDate() - 29);
+  const dow = first.getDay(); // 0=Sun
+
+  for (let i = 0; i < dow; i++) {
+    const el = document.createElement('div');
+    el.className = 'cc';
+    cal.appendChild(el);
+  }
+  for (let i = 0; i < 30; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - 29 + i);
+    const s   = dstr(d);
+    const num = d.getDate();
+
+    const el = document.createElement('div');
+    el.className = 'cc';
+    el.textContent = num;
+    el.title = s;
+
+    if (!db.startDate || s < db.startDate) {
+      el.classList.add('pre');
+    } else if (db.subs[s]) {
+      el.classList.add('hit');
+    } else if (s === t) {
+      el.classList.add('now');
+    } else {
+      el.classList.add('miss');
+    }
+    cal.appendChild(el);
+  }
+}
+
+function renderGallery() {
+  const g     = document.getElementById('gallery');
+  const dates = Object.keys(db.subs).sort().reverse().slice(0, 12);
+
+  if (!dates.length) {
+    g.className = '';
+    g.innerHTML = '<p class="empty">まだ提出がありません。</p>';
+    return;
+  }
+  g.className = 'gallery';
+  g.innerHTML = '';
+  for (const date of dates) {
+    const item = document.createElement('div');
+    item.className = 'gi';
+    item.innerHTML =
+      `<img src="${db.subs[date].img}" alt="${date}">` +
+      `<div class="gd">${date.slice(5)}</div>`;
+    g.appendChild(item);
+  }
+}
+
+/* ── Image processing ── */
+async function compress(file) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 400;
+        let w = img.width, h = img.height;
+        if (w >= h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
+        else        { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        res(c.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = rej;
+      img.src = e.target.result;
+    };
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function submit(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  try {
+    const img = await compress(file);
+    db.subs[today()] = { img, at: Date.now() };
+    persist();
+    render();
+  } catch(_) {
+    alert('画像の処理に失敗しました。');
+  }
+}
+
+/* ── UI wiring ── */
+function initUI() {
+  const dz = document.getElementById('dz');
+  const fi = document.getElementById('fi');
+
+  dz.addEventListener('click',     () => fi.click());
+  fi.addEventListener('change',    e  => { if (e.target.files[0]) submit(e.target.files[0]); fi.value = ''; });
+  dz.addEventListener('dragover',  e  => { e.preventDefault(); dz.classList.add('over'); });
+  dz.addEventListener('dragleave', ()  => dz.classList.remove('over'));
+  dz.addEventListener('drop',      e  => {
+    e.preventDefault(); dz.classList.remove('over');
+    if (e.dataTransfer.files[0]) submit(e.dataTransfer.files[0]);
+  });
+  document.addEventListener('paste', e => {
+    const f = e.clipboardData?.files[0];
+    if (f?.type.startsWith('image/')) submit(f);
+  });
+
+  document.getElementById('btn-start').addEventListener('click', () => {
+    db.startDate = today();
+    db.subs = {};
+    persist();
+    showApp();
+  });
+
+  document.getElementById('btn-reset-start').addEventListener('click', () => {
+    if (!confirm('開始日を今日にリセットしますか？\n提出データは保持されます。')) return;
+    db.startDate = today();
+    persist();
+    render();
+  });
+
+  document.getElementById('btn-reset-all').addEventListener('click', () => {
+    if (!confirm('全データを削除しますか？\nこの操作は取り消せません。')) return;
+    db = { startDate: null, subs: {} };
+    persist();
+    showSetup();
+  });
+}
+
+function showApp() {
+  document.getElementById('v-setup').style.display = 'none';
+  document.getElementById('v-app').style.display   = '';
+  render();
+}
+function showSetup() {
+  document.getElementById('v-setup').style.display = '';
+  document.getElementById('v-app').style.display   = 'none';
+}
+
+/* ── Boot ── */
+(function() {
+  const d = new Date();
+  const DOW = '日月火水木金土';
+  document.getElementById('hd-date').textContent =
+    `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${DOW[d.getDay()]}）`;
+})();
+
+load();
+initUI();
+if (db.startDate) showApp(); else showSetup();
+</script>
+</body>
+</html>
