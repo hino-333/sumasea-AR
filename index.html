@@ -435,9 +435,7 @@
     body.palette-open .top-bar,
     body.palette-open .top-bar *,
     body.palette-open .bottom-bar,
-    body.palette-open .bottom-bar *,
-    body.palette-open #sticker-layer,
-    body.palette-open #sticker-layer .sticker {
+    body.palette-open .bottom-bar * {
       pointer-events: none !important;
     }
 
@@ -1001,6 +999,13 @@
           <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
         </svg>
       </button>
+      <button class="float-btn" id="fb-flip" aria-label="反転">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="3" x2="12" y2="21" stroke-dasharray="2 2.5"/>
+          <polygon points="2,12 8,6 8,18" style="fill: white; stroke: none"/>
+          <polygon points="22,12 16,6 16,18" style="fill: white; stroke: none"/>
+        </svg>
+      </button>
       <button class="float-btn" id="fb-delete" aria-label="削除">
         <svg viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round">
           <line x1="6" y1="6" x2="18" y2="18"/>
@@ -1411,12 +1416,6 @@
       $('palette-scroll').classList.add('visible');
       $('palette-close').classList.add('visible');
       document.body.classList.add('palette-open');
-      // 開く時は選択中のステッカーを解除
-      if (selectedSticker) {
-        selectedSticker.classList.remove('selected');
-        selectedSticker = null;
-      }
-      hideFloatingControls();
       haptic();
     }
     function closePalette() {
@@ -1454,9 +1453,11 @@
       if (!el || !el._state) return;
       const s = el._state;
       const R = 64;
+      // ➖ 左 / ➕ 右 / 🔄 左下 / ↔ 右下 / ✕ 右上
       $('fb-plus').style.cssText   = `left:${s.x + R}px; top:${s.y}px;`;
       $('fb-minus').style.cssText  = `left:${s.x - R}px; top:${s.y}px;`;
-      $('fb-rotate').style.cssText = `left:${s.x}px; top:${s.y + R}px;`;
+      $('fb-rotate').style.cssText = `left:${s.x - 36}px; top:${s.y + R}px;`;
+      $('fb-flip').style.cssText   = `left:${s.x + 36}px; top:${s.y + R}px;`;
       $('fb-delete').style.cssText = `left:${s.x + 50}px; top:${s.y - 50}px;`;
     }
 
@@ -1481,6 +1482,14 @@
       if (!floatTarget) return;
       haptic(6);
       floatTarget._state.rotation += 15;
+      updateStickerTransform(floatTarget);
+    });
+
+    $('fb-flip').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!floatTarget) return;
+      haptic(8);
+      floatTarget._state.flipped = !floatTarget._state.flipped;
       updateStickerTransform(floatTarget);
     });
 
@@ -1542,6 +1551,7 @@
         y: cy,
         scale: initScale,
         rotation: 0,
+        flipped: false,
         emoji: item.emoji || null,
         src: item.src || null,
         src3d: item.src3d || null,
@@ -1571,7 +1581,8 @@
       const s = el._state;
       el.style.left = s.x + 'px';
       el.style.top = s.y + 'px';
-      el.style.transform = `translate(-50%, -50%) scale(${s.scale}) rotate(${s.rotation}deg)`;
+      const sx = (s.flipped ? -1 : 1) * s.scale;
+      el.style.transform = `translate(-50%, -50%) scale(${sx}, ${s.scale}) rotate(${s.rotation}deg)`;
       // Keep floating controls in sync
       if (floatTarget === el) positionFloatingControls(el);
     }
@@ -1813,7 +1824,7 @@
         ctx.save();
         ctx.translate(s.x, s.y);
         ctx.rotate(s.rotation * Math.PI / 180);
-        ctx.scale(s.scale, s.scale);
+        ctx.scale((s.flipped ? -1 : 1) * s.scale, s.scale);
         // Drop shadow for parity with CSS
         ctx.shadowColor = 'rgba(0,0,0,0.4)';
         ctx.shadowBlur = 12;
