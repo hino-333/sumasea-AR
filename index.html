@@ -1289,11 +1289,47 @@
        ============================================ */
     $('clear-btn').addEventListener('click', () => {
       haptic();
+      // 全ステッカーのスナップショットを保存（位置・スケール・回転・反転を含む）
+      const snapshots = [];
+      document.querySelectorAll('.sticker').forEach(el => {
+        const s = el._state;
+        snapshots.push({
+          emoji: s.emoji, src: s.src, src3d: s.src3d, anim: s.anim,
+          x: s.x, y: s.y, scale: s.scale, rotation: s.rotation, flipped: s.flipped
+        });
+      });
       $('sticker-layer').innerHTML = '';
       selectedSticker = null;
       hideFloatingControls();
-      showToast('クリアしました');
+      if (snapshots.length === 0) {
+        showToast('クリアしました');
+      } else {
+        showUndoAllToast(snapshots);
+      }
     });
+
+    function showUndoAllToast(snapshots) {
+      const t = $('toast');
+      t.innerHTML = 'ぜんぶけした！ <button id="undo-all-btn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:4px 12px;border-radius:20px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-left:8px;">もどす</button>';
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+      $('undo-all-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        snapshots.forEach(snap => {
+          addSticker(snap, { autoPlace: true, x: snap.x, y: snap.y, scale: snap.scale });
+          // 復元後に回転と反転を適用
+          const layer = $('sticker-layer');
+          const restored = layer.lastElementChild;
+          if (restored) {
+            restored._state.rotation = snap.rotation;
+            restored._state.flipped = snap.flipped;
+            updateStickerTransform(restored);
+          }
+        });
+        t.classList.remove('show');
+      });
+    }
 
     /* ============================================
        Camera Zoom
@@ -1452,13 +1488,17 @@
     function positionFloatingControls(el) {
       if (!el || !el._state) return;
       const s = el._state;
-      const R = 64;
+      // ステッカーは 100px (半径50px) + outline-offset 6px = 56px がスケール無し時の縁
+      // 拡大に応じて R / D もスケールに比例させる
+      const edge = 50 * s.scale + 6;     // ステッカー縁までの距離
+      const R = edge + 22;               // 上下左右用（縁の外に少し余白）
+      const D = edge + 6;                // 対角コーナー用（✕）
       // ➖ 左 / ➕ 右 / 🔄 左下 / ↔ 右下 / ✕ 右上
       $('fb-plus').style.cssText   = `left:${s.x + R}px; top:${s.y}px;`;
       $('fb-minus').style.cssText  = `left:${s.x - R}px; top:${s.y}px;`;
       $('fb-rotate').style.cssText = `left:${s.x - 36}px; top:${s.y + R}px;`;
       $('fb-flip').style.cssText   = `left:${s.x + 36}px; top:${s.y + R}px;`;
-      $('fb-delete').style.cssText = `left:${s.x + 50}px; top:${s.y - 50}px;`;
+      $('fb-delete').style.cssText = `left:${s.x + D}px; top:${s.y - D}px;`;
     }
 
     $('fb-plus').addEventListener('click', (e) => {
