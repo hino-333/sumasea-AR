@@ -1310,7 +1310,7 @@
 
     function showUndoAllToast(snapshots) {
       const t = $('toast');
-      t.innerHTML = 'ぜんぶけした！ <button id="undo-all-btn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:4px 12px;border-radius:20px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-left:8px;">もどす</button>';
+      t.innerHTML = '<div>ぜんぶけした！</div><button id="undo-all-btn" style="display:block;margin:10px auto 0;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:6px 18px;border-radius:20px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">もどす</button>';
       t.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
@@ -1557,7 +1557,7 @@
     function showUndoToast(item) {
       lastDeletedItem = item;
       const t = $('toast');
-      t.innerHTML = 'けした！ <button id="undo-btn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:4px 12px;border-radius:20px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-left:8px;">もどす</button>';
+      t.innerHTML = '<div>けした！</div><button id="undo-btn" style="display:block;margin:10px auto 0;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:6px 18px;border-radius:20px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">もどす</button>';
       t.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
