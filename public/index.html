@@ -128,6 +128,7 @@
       --poster-color: transparent;
       pointer-events: none;
       display: block;
+      overflow: hidden;
     }
 
     /* 選択中のみ回転操作を許可 */
@@ -1360,13 +1361,17 @@
         mv.setAttribute('src', encodeURI(item.src3d));
         mv.setAttribute('camera-controls', '');
         mv.setAttribute('disable-pan', '');
+        mv.setAttribute('disable-zoom', '');
         mv.setAttribute('interaction-prompt', 'none');
-        // デフォルトライティング (neutral環境マップ) でモデル可視化
+        // モデルを枠内にぴったり収める
+        mv.setAttribute('bounds', 'tight');
+        mv.setAttribute('camera-orbit', '0deg 75deg auto');
+        mv.setAttribute('field-of-view', '30deg');
+        // デフォルトライティング
         mv.setAttribute('environment-image', 'neutral');
         mv.setAttribute('exposure', '1.2');
-        mv.setAttribute('shadow-intensity', '0.6');
+        mv.setAttribute('shadow-intensity', '0');
         mv.setAttribute('autoplay', '');
-        mv.setAttribute('camera-orbit', '0deg 75deg auto');
         mv.classList.add('sticker-3d');
         // デバッグ用エラーログ
         mv.addEventListener('error', (e) => {
