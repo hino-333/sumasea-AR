@@ -468,6 +468,81 @@
       pointer-events: none !important;
     }
 
+    /* ============================================
+       横画面 (landscape) 専用レイアウト
+       ============================================ */
+    @media (orientation: landscape) and (max-height: 500px) {
+      /* パレット背景: 右からスライドイン */
+      .palette-bg {
+        top: 0;
+        bottom: 0;
+        left: auto;
+        right: 0;
+        width: 220px;
+        height: 100%;
+        transform: translateX(100%);
+        border-top: none;
+        border-left: 1px solid rgba(255,255,255,0.1);
+      }
+      .palette-bg.visible {
+        transform: translateX(0);
+      }
+
+      /* パレットスクロール: 縦スクロール */
+      .palette-scroll {
+        top: 56px;
+        right: 0;
+        bottom: 16px;
+        left: auto;
+        width: 220px;
+        height: auto;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 4px 14px;
+        gap: 12px;
+        transform: translateX(30px);
+        touch-action: pan-y;
+      }
+      .palette-scroll.visible {
+        transform: translateX(0);
+      }
+
+      /* おすすめラベルは横並び */
+      .palette-rec-wrap {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+      }
+      .recommend-label {
+        padding-left: 0;
+      }
+
+      /* 閉じるボタン: 右上 */
+      .palette-close {
+        bottom: auto;
+        top: calc(env(safe-area-inset-top, 0px) + 12px);
+        right: 14px;
+      }
+
+      /* 下部UI（拡大パネル＋シャッター）を下げる */
+      .bottom-bar {
+        padding: 8px 16px 8px;
+        gap: 8px;
+      }
+
+      /* ステッカートグル: コンパクトに */
+      .sticker-toggle-wrap {
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+      }
+
+      /* トップバー: 上に詰める */
+      .top-bar {
+        padding: 8px 16px;
+      }
+    }
+
     /* ============ Bottom Bar ============ */
     .bottom-bar {
       position: absolute;
