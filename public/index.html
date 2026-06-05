@@ -420,7 +420,7 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      z-index: 35;
+      z-index: 1000;
       pointer-events: none;
     }
 
@@ -464,6 +464,24 @@
     .sticker-toggle-icon.icon-when-open,
     .btn-label .label-when-open {
       display: none;
+    }
+
+    /* パレット表示中: ステッカーボタンを閉じるボタンに変える（縦・横共通） */
+    body.palette-open .sticker-toggle-icon.icon-when-closed,
+    body.palette-open .btn-label .label-when-closed {
+      display: none;
+    }
+    body.palette-open .sticker-toggle-icon.icon-when-open {
+      display: block;
+      width: 30px;
+      height: 30px;
+    }
+    body.palette-open .btn-label .label-when-open {
+      display: inline;
+    }
+    /* パレット右上の閉じるボタンは非表示（ステッカーボタンに統合） */
+    body.palette-open .palette-close {
+      display: none !important;
     }
 
     /* パレット表示中は他の操作を無効化 */
@@ -548,24 +566,6 @@
       /* トップバー: 上に詰める */
       .top-bar {
         padding: 8px 16px;
-      }
-
-      /* 横画面・パレット表示中: ステッカーボタンを閉じるボタンに変える */
-      body.palette-open .sticker-toggle-icon.icon-when-closed,
-      body.palette-open .btn-label .label-when-closed {
-        display: none;
-      }
-      body.palette-open .sticker-toggle-icon.icon-when-open {
-        display: block;
-        width: 30px;
-        height: 30px;
-      }
-      body.palette-open .btn-label .label-when-open {
-        display: inline;
-      }
-      /* 横画面ではパレット右上の閉じるボタンを使わない */
-      body.palette-open .palette-close {
-        display: none !important;
       }
     }
 
