@@ -552,10 +552,29 @@
         right: 14px;
       }
 
-      /* 下部UI（拡大パネル＋シャッター）を下げる */
+      /* 下部UI（シャッター）を下げる */
       .bottom-bar {
         padding: 8px 16px 8px;
         gap: 8px;
+      }
+
+      /* 拡大パネルは縦並びで左側に配置 */
+      .zoom-pills {
+        position: absolute;
+        left: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+        flex-direction: column;
+        gap: 4px;
+        padding: 4px;
+        z-index: 30;
+      }
+      .zoom-pill {
+        width: 40px;
+        min-width: 40px;
+        height: 32px;
+        padding: 0;
+        font-size: 11px;
       }
 
       /* ステッカートグル: コンパクトに */
