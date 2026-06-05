@@ -246,6 +246,28 @@
       background: var(--glass-strong);
     }
 
+    /* SVGアイコン共通 */
+    .icon-svg {
+      width: 22px;
+      height: 22px;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      display: block;
+    }
+
+    .float-btn .icon-svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .action-btn-icon-img {
+      width: 22px;
+      height: 22px;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      display: block;
+    }
+
     /* ============ Sticker Palette ============ */
     /* 背景: 一番下までまんべんなく、最背面（撮影/ステッカーボタンの下） */
     .palette-bg {
@@ -971,18 +993,14 @@
     <div class="top-bar">
       <div class="top-bar-right">
         <div class="btn-with-label">
-          <button class="glass-btn" id="flip-btn" aria-label="カメラ反転">⟲</button>
+          <button class="glass-btn" id="flip-btn" aria-label="カメラ反転">
+            <img src="img/icon_cameraflip.svg" alt="" class="icon-svg">
+          </button>
           <div class="btn-label">カメラ反転</div>
         </div>
         <div class="btn-with-label">
           <button class="glass-btn" id="clear-btn" aria-label="全てクリア">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-              <path d="M10 11v6"/>
-              <path d="M14 11v6"/>
-              <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
-            </svg>
+            <img src="img/icon_trash.svg" alt="" class="icon-svg">
           </button>
           <div class="btn-label">全てクリア</div>
         </div>
@@ -1014,33 +1032,19 @@
     <!-- ============ Floating Controls ============ -->
     <div id="floating-controls">
       <button class="float-btn" id="fb-plus" aria-label="拡大">
-        <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round">
-          <line x1="12" y1="5" x2="12" y2="19"/>
-          <line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
+        <img src="img/icon_plus.svg" alt="" class="icon-svg">
       </button>
       <button class="float-btn" id="fb-minus" aria-label="縮小">
-        <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
+        <img src="img/icon_minus.svg" alt="" class="icon-svg">
       </button>
       <button class="float-btn" id="fb-rotate" aria-label="回転">
-        <svg class="filled" viewBox="0 0 24 24">
-          <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
-        </svg>
+        <img src="img/icon_rorate.svg" alt="" class="icon-svg">
       </button>
       <button class="float-btn" id="fb-flip" aria-label="反転">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="3" x2="12" y2="21" stroke-dasharray="2 2.5"/>
-          <polygon points="2,12 8,6 8,18" style="fill: white; stroke: none"/>
-          <polygon points="22,12 16,6 16,18" style="fill: white; stroke: none"/>
-        </svg>
+        <img src="img/icon_flip.svg" alt="" class="icon-svg">
       </button>
       <button class="float-btn" id="fb-delete" aria-label="削除">
-        <svg viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round">
-          <line x1="6" y1="6" x2="18" y2="18"/>
-          <line x1="18" y1="6" x2="6" y2="18"/>
-        </svg>
+        <img src="img/icon_delete.svg" alt="" class="icon-svg">
       </button>
     </div>
 
@@ -1052,11 +1056,11 @@
       <img class="preview-image" id="preview-image" alt="撮影画像">
       <div class="preview-controls">
         <button class="action-btn" id="retake-btn">
-          <span class="action-btn-icon">↺</span>
+          <img src="img/icon_reshoot.svg" alt="" class="action-btn-icon-img">
           <span>とりなおす</span>
         </button>
         <button class="action-btn primary" id="share-btn">
-          <span class="action-btn-icon">↗</span>
+          <img src="img/icon_save.svg" alt="" class="action-btn-icon-img">
           <span>ほぞん・シェア</span>
         </button>
       </div>
