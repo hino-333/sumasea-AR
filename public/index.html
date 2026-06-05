@@ -255,6 +255,12 @@
       display: block;
     }
 
+    /* カメラ反転・全てクリアは少し大きく */
+    .glass-btn .icon-svg {
+      width: 30px;
+      height: 30px;
+    }
+
     .float-btn .icon-svg {
       width: 22px;
       height: 22px;
@@ -1010,7 +1016,9 @@
     <!-- ============ Sticker Palette ============ -->
     <div class="palette-bg" id="palette-bg"></div>
     <div class="palette-scroll" id="palette-scroll"></div>
-    <button class="palette-close" id="palette-close" aria-label="閉じる">✕</button>
+    <button class="palette-close" id="palette-close" aria-label="閉じる">
+      <img src="img/icon_delete.svg" alt="" class="icon-svg">
+    </button>
     <div class="sticker-toggle-wrap">
       <button class="sticker-toggle-btn" id="sticker-toggle-btn" aria-label="ステッカー">
         <img src="img/しゃち-sticker.png" alt="ステッカー" class="sticker-toggle-icon">
@@ -1051,7 +1059,9 @@
     <!-- ============ Preview ============ -->
     <div class="preview-screen" id="preview-screen">
       <div class="preview-top">
-        <button class="glass-btn" id="preview-close">✕</button>
+        <button class="glass-btn" id="preview-close" aria-label="閉じる">
+          <img src="img/icon_delete.svg" alt="" class="icon-svg">
+        </button>
       </div>
       <img class="preview-image" id="preview-image" alt="撮影画像">
       <div class="preview-controls">
