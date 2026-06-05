@@ -460,6 +460,12 @@
       -webkit-user-drag: none;
     }
 
+    /* デフォルト: 閉じるアイコン/ラベルは隠す */
+    .sticker-toggle-icon.icon-when-open,
+    .btn-label .label-when-open {
+      display: none;
+    }
+
     /* パレット表示中は他の操作を無効化 */
     body.palette-open .top-bar,
     body.palette-open .top-bar *,
@@ -542,6 +548,24 @@
       /* トップバー: 上に詰める */
       .top-bar {
         padding: 8px 16px;
+      }
+
+      /* 横画面・パレット表示中: ステッカーボタンを閉じるボタンに変える */
+      body.palette-open .sticker-toggle-icon.icon-when-closed,
+      body.palette-open .btn-label .label-when-closed {
+        display: none;
+      }
+      body.palette-open .sticker-toggle-icon.icon-when-open {
+        display: block;
+        width: 30px;
+        height: 30px;
+      }
+      body.palette-open .btn-label .label-when-open {
+        display: inline;
+      }
+      /* 横画面ではパレット右上の閉じるボタンを使わない */
+      body.palette-open .palette-close {
+        display: none !important;
       }
     }
 
@@ -1107,9 +1131,13 @@
     </button>
     <div class="sticker-toggle-wrap">
       <button class="sticker-toggle-btn" id="sticker-toggle-btn" aria-label="ステッカー">
-        <img src="img/しゃち-sticker.png" alt="ステッカー" class="sticker-toggle-icon">
+        <img src="img/しゃち-sticker.png" alt="ステッカー" class="sticker-toggle-icon icon-when-closed">
+        <img src="img/icon_delete.svg" alt="閉じる" class="sticker-toggle-icon icon-when-open">
       </button>
-      <div class="btn-label">ステッカー</div>
+      <div class="btn-label">
+        <span class="label-when-closed">ステッカー</span>
+        <span class="label-when-open">閉じる</span>
+      </div>
     </div>
 
     <!-- ============ Bottom Bar ============ -->
