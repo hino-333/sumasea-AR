@@ -472,13 +472,13 @@
        横画面 (landscape) 専用レイアウト
        ============================================ */
     @media (orientation: landscape) and (max-height: 500px) {
-      /* パレット背景: 右からスライドイン */
+      /* パレット背景: 右からスライドイン、コンパクト幅 */
       .palette-bg {
         top: 0;
         bottom: 0;
         left: auto;
         right: 0;
-        width: 220px;
+        width: 130px;
         height: 100%;
         transform: translateX(100%);
         border-top: none;
@@ -488,20 +488,20 @@
         transform: translateX(0);
       }
 
-      /* パレットスクロール: 縦スクロール */
+      /* パレットスクロール: 縦スクロール、内側に収まる幅 */
       .palette-scroll {
         top: 56px;
         right: 0;
         bottom: 16px;
         left: auto;
-        width: 220px;
+        width: 130px;
         height: auto;
         flex-direction: column;
         align-items: center;
         overflow-x: hidden;
         overflow-y: auto;
-        padding: 4px 14px;
-        gap: 12px;
+        padding: 4px 12px;
+        gap: 10px;
         transform: translateX(30px);
         touch-action: pan-y;
       }
@@ -509,14 +509,16 @@
         transform: translateX(0);
       }
 
-      /* おすすめラベルは横並び */
+      /* 横画面では おすすめラッパーも縦並びを維持し、ラベル幅を狭める */
       .palette-rec-wrap {
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
-        gap: 10px;
+        gap: 4px;
+        width: 76px;
       }
       .recommend-label {
         padding-left: 0;
+        font-size: 10px;
       }
 
       /* 閉じるボタン: 右上 */
