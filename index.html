@@ -1539,15 +1539,16 @@
         mv.setAttribute('disable-pan', '');
         mv.setAttribute('disable-zoom', '');
         mv.setAttribute('interaction-prompt', 'none');
-        // モデルを枠内にぴったり収める
-        mv.setAttribute('bounds', 'tight');
-        mv.setAttribute('camera-orbit', '0deg 75deg auto');
-        mv.setAttribute('field-of-view', '30deg');
+        // モデル全体をフレーム内に収める（自動）
+        mv.setAttribute('camera-orbit', '0deg 90deg auto');
+        mv.setAttribute('camera-target', 'auto auto auto');
         // デフォルトライティング
         mv.setAttribute('environment-image', 'neutral');
         mv.setAttribute('exposure', '1.2');
         mv.setAttribute('shadow-intensity', '0');
+        // アニメーション自動再生
         mv.setAttribute('autoplay', '');
+        mv.setAttribute('animation-name', '*');
         mv.classList.add('sticker-3d');
         // デバッグ用エラーログ
         mv.addEventListener('error', (e) => {
