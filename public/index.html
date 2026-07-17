@@ -839,7 +839,7 @@
 
     .welcome-stickers .ws-1 { top: 5%;  left: 4%;  width: 32%; animation: float-a 5s ease-in-out infinite; }
     .welcome-stickers .ws-2 { top: 22%; left: 32%; width: 42%; animation: float-b 6s ease-in-out infinite; z-index: 2; }
-    .welcome-stickers .ws-3 { top: 0%;  right: 6%; width: 26%; animation: float-c 5.5s ease-in-out infinite; }
+    .welcome-stickers .ws-3 { top: 0%;  right: 6%; width: 26%; animation: float-c-flipped 5.5s ease-in-out infinite; }
     .welcome-stickers .ws-4 { bottom: 6%; left: 8%; width: 30%; animation: float-b 5s ease-in-out infinite 0.5s; }
     .welcome-stickers .ws-5 { bottom: 4%; right: 4%; width: 30%; animation: float-a 6.5s ease-in-out infinite 0.8s; }
 
@@ -854,6 +854,10 @@
     @keyframes float-c {
       0%, 100% { transform: translateY(0) rotate(5deg); }
       50% { transform: translateY(-6px) rotate(-2deg); }
+    }
+    @keyframes float-c-flipped {
+      0%, 100% { transform: scaleX(-1) translateY(0) rotate(5deg); }
+      50% { transform: scaleX(-1) translateY(-6px) rotate(-2deg); }
     }
 
     .start-btn {
